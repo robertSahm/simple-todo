@@ -1,40 +1,42 @@
-import express from 'express';
-import path from 'path';
-import webpack from 'webpack';
-import WebpackDevServer from 'webpack-dev-server';
-import bodyParser from 'body-parser';
-import TodoRoutes from './todo-routes';
+import express from "express"
+import path from "path"
+import webpack from "webpack"
+import WebpackDevServer from "webpack-dev-server"
+import bodyParser from "body-parser"
+import TodoRoutes from "./todo-routes"
 
-const APP_PORT = 3001;
+const APP_PORT = 3001
 
 const compiler = webpack({
-	mode: 'development',
-	entry: ['whatwg-fetch', path.resolve(__dirname, '../frontend', 'app.js')],
+	mode: "development",
+	entry: ["whatwg-fetch", path.resolve(__dirname, "../frontend", "app.js")],
 	module: {
 		rules: [
 			{
 				test: /\.js$/,
 				exclude: /\/node_modules\//,
 				use: {
-					loader: 'babel-loader',
-				},
-			},
-		],
+					loader: "babel-loader"
+				}
+			}
+		]
 	},
 	output: {
-		filename: 'app.js',
-		path: '/',
-	},
-});
+		filename: "app.js",
+		path: "/"
+	}
+})
 
 const app = new WebpackDevServer(compiler, {
-	contentBase: '/public/',
-	publicPath: '/frontend/',
-	stats: {colors: true},
-});
+	contentBase: "/public/",
+	publicPath: "/frontend/",
+	stats: { colors: true }
+})
 
-app.use(bodyParser.json());
-app.use('/', express.static(path.resolve(__dirname, '../public')));
-app.use(TodoRoutes);
+app.use(bodyParser.json())
+app.use("/", express.static(path.resolve(__dirname, "../public")))
+app.use(TodoRoutes)
 
-app.listen(APP_PORT, () => { console.log(`App is now running on http://localhost:${APP_PORT}`); });
+app.listen(APP_PORT, () => {
+	console.log(`App is now running on http://localhost:${APP_PORT}`)
+})
