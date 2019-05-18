@@ -1,5 +1,8 @@
 import React from 'react';
 import FetchApi from '../fetch-api';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 
 const ENTER_KEY_CODE = 13;
 
@@ -50,10 +53,15 @@ export default class TodoApp extends React.Component {
 		this.createTodo();
 	};
 
+  // How many ToDo's pending #
+  // How Many Todo's completed #
+
 	render() {
 		return (
 			<div>
-				<h1>todos</h1>
+        <Typography component="h2" variant="h1" align="center" gutterBottom>
+          todos
+        </Typography>
 				<input
 					autoFocus
 					onChange={this.handleChange}
@@ -66,7 +74,8 @@ export default class TodoApp extends React.Component {
 						<li key={todo.id}>
 							<div className="view">
 								<label>{todo.text}</label>
-								<button onClick={() => this.handleDeleteRequest(todo.id)}>Remove Todo</button>
+								{/* <button onClick={() => this.handleDeleteRequest(todo.id)}>Remove Todo</button> */}
+								<Button onClick={() => this.handleDeleteRequest(todo.id)}>Remove Todo</Button>
 							</div>
 						</li>
 					))}
