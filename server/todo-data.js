@@ -21,7 +21,9 @@ export default class TodoData {
 		return new Promise((resolve, reject) => {
 			const todoIndex = todos.findIndex(todo => todo.id.toString() === id.toString());
 			if (todoIndex < 0 || todoIndex >= todos.length) return reject();
-			todos.splice(todoIndex, 1);
+      /////////////////////////////////
+			todos.splice(todoIndex, 1); 
+      /////////////////////////////////
 			resolve();
 		})
 	}
