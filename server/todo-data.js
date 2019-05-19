@@ -2,6 +2,7 @@ let todosCreated = 1
 let todos = [
 	{
 		id: 1,
+    completed: false,
 		text: "Finish coding exercise"
 	}
 ]
@@ -25,17 +26,18 @@ export default class TodoData {
 				todo => todo.id.toString() === id.toString()
 			)
 			if (todoIndex < 0 || todoIndex >= todos.length) return reject()
-			/////////////////////////////////
 			todos.splice(todoIndex, 1)
-			/////////////////////////////////
 			resolve()
 		})
 	}
 
-	static update(id, todo) {
+	static setComplete(id, completed) {
 		return new Promise((resolve, reject) => {
-			// TODO: Implement
-			reject("Not Implemented")
+      const todoIndex = todos.findIndex(
+				todo => Number(todo.id) === Number(id)
+			)
+      todos[todoIndex].completed = true
+      resolve(todos)
 		})
 	}
 }
