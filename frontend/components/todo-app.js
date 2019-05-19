@@ -1,15 +1,32 @@
 import React from "react"
 import FetchApi from "../fetch-api"
-import Button from "@material-ui/core/Button"
-import Typography from "@material-ui/core/Typography"
-import { withStyles } from "@material-ui/core/styles"
+import {
+	TextField,
+	Checkbox,
+	Paper,
+	Button,
+	Grid,
+	List,
+	Typography,
+	AppBar,
+	Toolbar, 
+  ListItem,
+  ListItemText,
+} from "@material-ui/core"
+import Input from '../components/todo-input'
 
 const ENTER_KEY_CODE = 13
 
+const addButton = {
+  background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+  border: 0,
+  borderRadius: 3,
+  boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+  color: 'white',
+}
+
 export default class TodoApp extends React.Component {
-
 	state = { todos: [], newText: "" }
-
 	constructor(props) {
 		super(props)
 		this.getTodos()
@@ -44,13 +61,21 @@ export default class TodoApp extends React.Component {
 			.catch(() => alert("Error removing todo"))
 	}
 
-  completeTodo = id => {
-    FetchApi.put(`/todo/${id}`, { completed: true })
-    .then(updateTodos => {
-      this.state.todos[id - 1].completed == false ? 
-        this.setState({ todos: updateTodos }) 
-        : null
-    })
+  clickComplete = todo => {
+    if (todo.completed == true)
+			FetchApi.put(`/todo/${todo.id}`, { completed: false }).then(
+				updateTodos => {
+					this.setState({ todos: updateTodos })
+				}
+			)
+		else
+			FetchApi.put(`/todo/${todo.id}`, { completed: true }).then(
+				updateTodos => {
+					this.state.todos[todo.id - 1].completed === false
+						? this.setState({ todos: updateTodos })
+						: null
+				}
+			)
   }
 
 	handleChange = e => {
@@ -79,30 +104,73 @@ export default class TodoApp extends React.Component {
 	render() {
 		return (
 			<div>
-				<Typography component="h1" variant="h1" align="center" gutterBottom>
-					todos
-				</Typography>
-				<Typography component="h5" variant="h5" align="center" gutterBottom>
-					<div>Completed: {this.showCompletedCount()}</div>
-					<div>Pending: {this.showPendingCount()}</div>
-				</Typography>
-				<input
-					autoFocus
-					onChange={this.handleChange}
-					onKeyDown={this.handleKeyDown}
-					placeholder="What needs to be done?"
-					value={this.state.newText}
-				/>
-				<ul>
-					{this.state.todos.map(todo => (
-						<li key={todo.id}>
-							<label>{todo.text}</label>
-							<Button onClick={() => this.completeTodo(todo.id)}>
-								Complete
+				<AppBar color="primary" position="static">
+					<Toolbar>
+            <Grid
+              container 
+              justify="space-between"
+              spacing={8}
+            >
+              <Grid xs={6} sm={8} item>
+                <Typography variant="h6" color="inherit">
+                  TODO APP
+                </Typography>
+              </Grid>
+              <Grid xs={3} sm={2} item>
+                <Typography variant="overline" align="right" color="inherit">
+                  Completed: {this.showCompletedCount()}
+                </Typography>
+              </Grid>
+              <Grid xs={3} sm={2} item>
+                <Typography variant="overline" align="right" color="inherit">
+                  Pending: {this.showPendingCount()}
+                </Typography>
+              </Grid>
+            </Grid>
+					</Toolbar>
+				</AppBar>
+
+				<Paper style={{ marginLeft: 1, marginRight: 1, marginTop: 16, padding: 16 }}>
+					<Grid container alignItems="center">
+						<Grid xs={10} md={11} item style={{ paddingRight: 16 }}>
+							<TextField
+								autoFocus
+								fullWidth
+								onChange={this.handleChange}
+								onKeyDown={this.handleKeyDown}
+								value={this.state.newText}
+								align="center"
+								label="Enter todo item"
+							/>
+						</Grid>
+						<Grid xs={2} md={1} item>
+							<Button
+								fullWidth
+                style={addButton}
+								color="inherit"
+								onClick={this.createTodo}
+							>
+								Add
 							</Button>
-						</li>
-					))}
-				</ul>
+						</Grid>
+					</Grid>
+				</Paper>
+
+        <Paper style={{ marginLeft: 1, marginRight: 1, marginTop: 16, padding: 0 }}>
+          <List style={{ overflow: "scroll", padding: 0 }}>
+            {this.state.todos.map(todo => (
+              <ListItem key={todo.id} divider>
+                <Checkbox
+                  onClick={() => this.clickComplete(todo)}
+                  color="primary"
+                  checked={todo.completed === true ? true : false}
+                />
+                <ListItemText>{todo.text}</ListItemText>
+              </ListItem>
+            ))}
+          </List>
+
+        </Paper>
 			</div>
 		)
 	}
