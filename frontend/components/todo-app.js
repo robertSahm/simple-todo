@@ -7,6 +7,7 @@ import { withStyles } from "@material-ui/core/styles"
 const ENTER_KEY_CODE = 13
 
 export default class TodoApp extends React.Component {
+
 	state = { todos: [], newText: "" }
 
 	constructor(props) {
@@ -21,7 +22,7 @@ export default class TodoApp extends React.Component {
 	}
 
 	createTodo = () => {
-		FetchApi.post("/todo", { text: this.state.newText })
+		FetchApi.post("/todo", { text: this.state.newText, completed: false })
 			.then(newTodo => {
 				const newTodos = Array.from(this.state.todos)
 				newTodos.push(newTodo)
@@ -43,6 +44,15 @@ export default class TodoApp extends React.Component {
 			.catch(() => alert("Error removing todo"))
 	}
 
+  completeTodo = id => {
+    FetchApi.put(`/todo/${id}`, { completed: true })
+    .then(updateTodos => {
+      this.state.todos[id - 1].completed == false ? 
+        this.setState({ todos: updateTodos }) 
+        : null
+    })
+  }
+
 	handleChange = e => {
 		this.setState({ newText: e.target.value })
 	}
@@ -52,14 +62,29 @@ export default class TodoApp extends React.Component {
 		this.createTodo()
 	}
 
-	// How many ToDo's pending #
-	// How Many Todo's completed #
+  showPendingCount = () => {
+    let pending = this.state.todos.filter(i => {
+      return i.completed == false
+    })
+    return pending.length
+  }
+
+  showCompletedCount = () => {
+    let completed = this.state.todos.filter(i => {
+      return i.completed == true
+    })
+    return completed.length
+  }
 
 	render() {
 		return (
 			<div>
-				<Typography component="h2" variant="h1" align="center" gutterBottom>
+				<Typography component="h1" variant="h1" align="center" gutterBottom>
 					todos
+				</Typography>
+				<Typography component="h5" variant="h5" align="center" gutterBottom>
+					<div>Completed: {this.showCompletedCount()}</div>
+					<div>Pending: {this.showPendingCount()}</div>
 				</Typography>
 				<input
 					autoFocus
@@ -71,13 +96,10 @@ export default class TodoApp extends React.Component {
 				<ul>
 					{this.state.todos.map(todo => (
 						<li key={todo.id}>
-							<div className="view">
-								<label>{todo.text}</label>
-								{/* <button onClick={() => this.handleDeleteRequest(todo.id)}>Remove Todo</button> */}
-								<Button onClick={() => this.handleDeleteRequest(todo.id)}>
-									Remove Todo
-								</Button>
-							</div>
+							<label>{todo.text}</label>
+							<Button onClick={() => this.completeTodo(todo.id)}>
+								Complete
+							</Button>
 						</li>
 					))}
 				</ul>
