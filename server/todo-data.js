@@ -36,7 +36,9 @@ export default class TodoData {
       const todoIndex = todos.findIndex(
 				todo => Number(todo.id) === Number(id)
 			)
-      todos[todoIndex].completed = true
+      todos[todoIndex].completed == false
+        ? todos[todoIndex].completed = true
+        : todos[todoIndex].completed = false
       resolve(todos)
 		})
 	}
