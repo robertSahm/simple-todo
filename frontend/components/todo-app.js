@@ -1,14 +1,9 @@
 import React from "react"
 import FetchApi from "../fetch-api"
-import {
-	Grid,
-	Typography,
-	AppBar,
-	Toolbar, 
-} from "@material-ui/core"
-import TodoToolbar from '../components/todo-toolbar'
-import Input from '../components/todo-input'
-import TodoList from '../components/todo-list'
+import { Grid, Typography, AppBar, Toolbar } from "@material-ui/core"
+import TodoToolbar from "../components/todo-toolbar"
+import Input from "../components/todo-input"
+import TodoList from "../components/todo-list"
 
 const ENTER_KEY_CODE = 13
 
@@ -24,21 +19,20 @@ export default class TodoApp extends React.Component {
 			.then(todos => this.setState({ todos }))
 			.catch(() => alert("There was an error getting todos"))
 	}
-  
-  showPendingCount = () => {
-    let pending = this.state.todos.filter(i => {
-      return i.completed == false
-    })
-    return pending.length
-  }
 
-  showCompletedCount = () => {
-    let completed = this.state.todos.filter(i => {
-      return i.completed == true
-    })
-    return completed.length
-  }
-  
+	showPendingCount = () => {
+		let pending = this.state.todos.filter(i => {
+			return i.completed == false
+		})
+		return pending.length
+	}
+
+	showCompletedCount = () => {
+		let completed = this.state.todos.filter(i => {
+			return i.completed == true
+		})
+		return completed.length
+	}
 
 	createTodo = () => {
 		FetchApi.post("/todo", { text: this.state.newText, completed: false })
@@ -50,14 +44,14 @@ export default class TodoApp extends React.Component {
 			.catch(() => alert("There was an error creating the todo"))
 	}
 
-  clickComplete = todo => {
-    if (todo.completed == true)
+	clickComplete = todo => {
+		if (todo.completed == true)
 			FetchApi.put(`/todo/${todo.id}`, { completed: false }).then(
 				updateTodos => {
 					this.setState({ todos: updateTodos })
 				}
 			)
-		else
+		else if (todo.completed == false)
 			FetchApi.put(`/todo/${todo.id}`, { completed: true }).then(
 				updateTodos => {
 					this.state.todos[todo.id - 1].completed === false
@@ -65,7 +59,7 @@ export default class TodoApp extends React.Component {
 						: null
 				}
 			)
-  }
+	}
 
 	handleChange = e => {
 		this.setState({ newText: e.target.value })
@@ -76,24 +70,20 @@ export default class TodoApp extends React.Component {
 		this.createTodo()
 	}
 
-
 	render() {
 		return (
 			<div>
-        <TodoToolbar 
-          showCompletedCount={this.showCompletedCount}
-          showPendingCount={this.showPendingCount}
-        />
-        <Input 
-          handleChange={this.handleChange}
-          handleKeyDown={this.handleKeyDown}
-          createTodo={this.createTodo}
-          newText={this.state.newText}
-        />
-        <TodoList 
-          todos={this.state.todos}
-          clickComplete={this.clickComplete}
-        />
+				<TodoToolbar
+					showCompletedCount={this.showCompletedCount}
+					showPendingCount={this.showPendingCount}
+				/>
+				<Input
+					handleChange={this.handleChange}
+					handleKeyDown={this.handleKeyDown}
+					createTodo={this.createTodo}
+					newText={this.state.newText}
+				/>
+				<TodoList todos={this.state.todos} clickComplete={this.clickComplete} />
 			</div>
 		)
 	}
